@@ -6,10 +6,10 @@ from collections import defaultdict
 from pprint import pprint
 
 
-def get_commits():
+def get_commits(ver):
     # Run cmd
-    p = Popen(['git', 'log', '--format=%B%H----DELIMITER----'], stdout=PIPE)
-    stdout, stderr = p.communicate()
+    p = Popen(['git', 'log', '--format=%B%H----DELIMITER----', ver], stdout=PIPE)
+    stdout, _ = p.communicate()
 
     # Split output and filter.
     outputs = filter(None, (stdout.decode()).split('----DELIMITER----\n'))
@@ -25,15 +25,23 @@ def get_commits():
     return commits_dict
 
 
+def get_current_version():
+    p = Popen(['git', 'describe'], stdout=PIPE)
+    stdout, _ = p.communicate()
+    return stdout.decode().strip()
+
+
 if __name__ == "__main__":
     current_date = date.today().isoformat()
-    changelog = f"# {current_date}\n\n"
+    current_version = get_current_version()
+    changelog = f"# {current_version} ({current_date})\n\n"
 
-    commits = get_commits()
+    commits = get_commits(current_version)
     for category, messages in commits.items():
         changelog += f'## {category}\n'
         for message in messages:
-            changelog += f'* {message}'
+            changelog += f'* {message}\n'
+        changelog += '\n'
 
     if os.path.exists('changelog.md'):
         with open('changelog.md', 'r') as f:
