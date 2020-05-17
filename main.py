@@ -8,7 +8,8 @@ from pprint import pprint
 
 def get_commits(ver):
     # Run cmd
-    p = Popen(['git', 'log', '--format=%B%H----DELIMITER----', ver], stdout=PIPE)
+    p = Popen(['git', 'log', '--format=%B%H----DELIMITER----',
+               f'{ver}..HEAD'], stdout=PIPE)
     stdout, _ = p.communicate()
 
     # Split output and filter.
@@ -28,7 +29,8 @@ def get_commits(ver):
 def get_current_version():
     p = Popen(['git', 'describe'], stdout=PIPE)
     stdout, _ = p.communicate()
-    return stdout.decode().strip()
+    version = stdout.decode().split('-')[0]
+    return version
 
 
 if __name__ == "__main__":
@@ -38,7 +40,7 @@ if __name__ == "__main__":
 
     commits = get_commits(current_version)
     for category, messages in commits.items():
-        changelog += f'## {category}\n'
+        changelog += f'## {category}\n\n'
         for message in messages:
             changelog += f'* {message}\n'
         changelog += '\n'
