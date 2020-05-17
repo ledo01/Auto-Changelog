@@ -42,7 +42,7 @@ if __name__ == "__main__":
     for category, messages in commits.items():
         changelog += f'## {category}\n\n'
         for message in messages:
-            changelog += f'* {message}\n'
+            changelog += f'- {message}\n'
         changelog += '\n'
 
     if os.path.exists('changelog.md'):

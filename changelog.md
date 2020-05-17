@@ -1,3 +1,13 @@
+# v1.1 (2020-05-17)
+
+## Fix
+
+- :bug: Fixes the spacing.
+
+## Chore
+
+- :bookmark: Bump to version 1.1
+
 # v1 (2020-05-17)
 
 ## Feat
