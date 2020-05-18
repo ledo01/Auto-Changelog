@@ -5,6 +5,16 @@ from collections import defaultdict
 
 from pprint import pprint
 
+# Dict for settings the display name of the categories
+# For example, features are tag with `feat:` in the commits
+# but I want to display Features in the changelog.
+# Also, any category not in this dict are ignored, in this way
+# you can control the categories you want to display.
+CATEGORIES = {
+    'feat': 'Feature',
+    'fix': 'Bug Fixes'
+}
+
 
 def get_commits(ver):
     # Run cmd
@@ -21,7 +31,7 @@ def get_commits(ver):
 
     for commit in commits:
         category, message = commit['message'].split(':', 1)
-        commits_dict[category.title()].append(message.strip())
+        commits_dict[category].append(message.strip())
 
     return commits_dict
 
@@ -40,10 +50,11 @@ if __name__ == "__main__":
 
     commits = get_commits(current_version)
     for category, messages in commits.items():
-        changelog += f'## {category}\n\n'
-        for message in messages:
-            changelog += f'- {message}\n'
-        changelog += '\n'
+        if category in CATEGORIES:
+            changelog += f'## {CATEGORIES[category]}\n\n'
+            for message in messages:
+                changelog += f'- {message}\n'
+            changelog += '\n'
 
     if os.path.exists('changelog.md'):
         with open('changelog.md', 'r') as f:
